@@ -25,4 +25,6 @@ exploratory/ - all the file here came about during exploratory work to get an id
 
   puzzle_images - this contains the original 3x3 .jpg I used.  The individual pieces are labeled by the directional location of the piece - C = Central, N = North, SW = SouthWest, etc. C_OutBorderIn.jpg was generated to verify the one pixel border work.
 
+9x9_refinement/ - After exploratory work, start to pull all the code together into a useful design.  
+
 

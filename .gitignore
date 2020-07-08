@@ -1,6 +1,8 @@
-# Jupyter files
-.ipynb_checkpoints
+# Jupyter 
+*/.ipynb_checkpoints
 
-# R files
-.Rhistory
+# R 
+*/.Rhistory
 
+# Python 
+*/__pycache__
