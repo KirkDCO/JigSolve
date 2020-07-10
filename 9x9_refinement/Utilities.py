@@ -102,6 +102,7 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
     SuffTable = [[0 for k in range(len(N)+1)] for l in range(len(M)+1)] 
       
     # Build suffix table
+    cutoff_multiplier = 2 # penalty for extended ranges outsisde cutoff
     for i in range(len(M) + 1): 
         for j in range(len(N) + 1): 
             if (i == 0 or j == 0): 
@@ -120,12 +121,19 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
                 elif mode == 'SW align': #Smith-Waterman - local alignment
                     if distr_score:
                         qtile = (d-avg)/sd
-                        SuffTable[i][j] = SuffTable[i-1][j-1] - qtile
+                        if qtile > 0:
+                            SuffTable[i][j] = SuffTable[i-1][j-1] - qtile * cutoff_multiplier
+                            cutoff_multiplier *= 2
+                        else:
+                            SuffTable[i][j] = SuffTable[i-1][j-1] - qtile
+                            cutoff_multiplier = 2
                     else:
                         if d < cutoff: # small distance improve our score
                             SuffTable[i][j] = SuffTable[i-1][j-1] + 1
+                            cutoff_multiplier = 1
                         else: #large distances degrade our score
-                            SuffTable[i][j] = SuffTable[i-1][j-1] - 1
+                            SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier
+                            cutoff_multiplier *= 2
                     SuffTable[i][j] = max(0,SuffTable[i][j])
 
                 if SuffTable[i][j] > mx:
@@ -134,9 +142,9 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
                     mx_N = j
     
     # determine the length of the best scoring window
+    length = 1
     for length in range( 1, min(mx_M,mx_N) ):
         if SuffTable[mx_M-length][mx_N-length] == 0:
             break
 
     return SuffTable, mx, mx_M, mx_N, length-1
-
