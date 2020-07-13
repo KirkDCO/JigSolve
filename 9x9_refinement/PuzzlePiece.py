@@ -11,10 +11,10 @@ class Piece:
         border = self.__load_border(border_fn)
         
         self.border_sampling_rate = border_sampling_rate
-        border_sample = self.__sample_border(border_sampling_rate)
+        border_sample = self.sample_border(border_sampling_rate)
         
         self.dist_window_size = dist_window_size
-        border_distances = self.__create_border_distances(dist_window_size)
+        border_distances = self.create_border_distances(dist_window_size)
         
     def __load_border(self, border_fn = None):
         
@@ -34,7 +34,7 @@ class Piece:
             self.pts[i]['y'] = int(tok[1])
         fin.close()
         
-    def __sample_border(self, sampling_rate = 0.20):
+    def sample_border(self, sampling_rate = 0.20):
         
         # sample the border and store the sampled points 
         
@@ -48,13 +48,12 @@ class Piece:
                                    'y': self.pts[index]['y']
                                   }
     
-    def __create_border_distances(self, dist_window_size = 10):
+    def create_border_distances(self, dist_window_size = 10):
         
         # for the sampled points, create all pair-wise distances
         
         self.sample_dists = {}
         indices = self.sampled_pts.keys()
-        
         for idx in [*indices]:
             window = [ idx + v for v in range(-dist_window_size, dist_window_size + 1) ]
             for i,v in enumerate(window):
@@ -68,7 +67,7 @@ class Piece:
                 for k,kdx in enumerate(window[j+1:]):
                     self.sample_dists[idx].append(EucDist( [self.sampled_pts[jdx]['x'], self.sampled_pts[jdx]['y'] ],
                                                            [self.sampled_pts[kdx]['x'], self.sampled_pts[kdx]['y'] ] ))
-                    
+                   
                                                                                                          
         
         
