@@ -11,7 +11,7 @@ def EucDist(X, Y):
     # X and Y are lists with coordinates of points in arbitrary dimensions
     return sqrt(sum([ (x-y)**2 for x,y in zip(X,Y) ]))
 
-def sd(data):
+def std(data):
     n = len(data)
 
     if n <= 1:
@@ -90,7 +90,7 @@ def AlignScore(M, N, m_pt, n_pt, window):
     return sqrt(sum)
 
 def AlignPieces_Euclid(M, N, mode = 'max distance', window=10, 
-             cutoff = 100, distr_score = False, avg = 25, sd = 5): 
+             cutoff = 100, distr_score = False, av = 25, sd = 5): 
       
     
     # places to store maximum score and which position
@@ -100,7 +100,7 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
     
     # Create suffix table
     SuffTable = [[0 for k in range(len(N)+1)] for l in range(len(M)+1)] 
-      
+    
     # Build suffix table
     cutoff_multiplier = 2 # penalty for extended ranges outsisde cutoff
     for i in range(len(M) + 1): 
@@ -120,7 +120,7 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
                         SuffTable[i][j] = SuffTable[i-1][j-1] - 1
                 elif mode == 'SW align': #Smith-Waterman - local alignment
                     if distr_score:
-                        qtile = (d-avg)/sd
+                        qtile = (d-av)/sd
                         if qtile > 0:
                             SuffTable[i][j] = SuffTable[i-1][j-1] - qtile * cutoff_multiplier
                             cutoff_multiplier *= 2
@@ -143,8 +143,8 @@ def AlignPieces_Euclid(M, N, mode = 'max distance', window=10,
     
     # determine the length of the best scoring window
     length = 1
-    for length in range( 1, min(mx_M,mx_N) ):
+    for length in range( 1, min(mx_M,mx_N)+1 ):
         if SuffTable[mx_M-length][mx_N-length] == 0:
             break
 
-    return SuffTable, mx, mx_M, mx_N, length-1
+    return SuffTable, mx, mx_M, mx_N, length+1
