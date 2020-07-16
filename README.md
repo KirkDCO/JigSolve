@@ -27,4 +27,6 @@ exploratory/ - all the file here came about during exploratory work to get an id
 
 9x9_refinement/ - After exploratory work, start to pull all the code together into a useful design.  
 
+general_design/ - After getting things working in 9x9_refinement, code will be organized into a more general design.  The pieces/ directory contains only the \*border.csv files, which are the expected starting point for now - all other representations will be created from this point.
+
 
