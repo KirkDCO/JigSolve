@@ -1,4 +1,4 @@
-import math
+from math import *
 
 from Utilities import *
 
@@ -40,12 +40,12 @@ class PuzzlePiece:
         
         # sample the border and store the sampled points 
         
-        self.sampled_border = {}
+        self.border_sample = {}
         
         indices = [i for i in range(0,len(self.ordered_border), floor(1/border_sampling_rate)) ]
         
         for i,index in enumerate(indices):
-            self.sampled_border[i] = {'orig_idx': index,
+            self.border_sample[i] = {'orig_idx': index,
                                    'x': self.ordered_border[index]['x'],
                                    'y': self.ordered_border[index]['y']
                                   }
@@ -55,7 +55,7 @@ class PuzzlePiece:
         # for the sampled points, create all pair-wise distances
         
         self.sample_dists = {}
-        indices = self.sampled_border.keys()
+        indices = self.border_sample.keys()
         for idx in [*indices]:
             window = [ idx + v for v in range(-dist_window_size, dist_window_size + 1) ]
             for i,v in enumerate(window):
@@ -67,8 +67,8 @@ class PuzzlePiece:
             self.sample_dists[idx] = [] 
             for j,jdx in enumerate(window[:-1]):
                 for k,kdx in enumerate(window[j+1:]):
-                    self.sample_dists[idx].append(EucDist( [self.sampled_border[jdx]['x'], self.sampled_border[jdx]['y'] ],
-                                                           [self.sampled_border[kdx]['x'], self.sampled_border[kdx]['y'] ] ))
+                    self.sample_dists[idx].append(euc_dist( [self.border_sample[jdx]['x'], self.border_sample[jdx]['y'] ],
+                                                            [self.border_sample[kdx]['x'], self.border_sample[kdx]['y'] ] ))
 
     def order_border(self):
         
@@ -84,7 +84,7 @@ class PuzzlePiece:
                 x2 = self.border[j]['x']
                 y1 = self.border[i]['y']
                 y2 = self.border[j]['y']
-                d = math.sqrt( (x1-x2)**2 + (y1-y2)**2 )
+                d = sqrt( (x1-x2)**2 + (y1-y2)**2 )
                 dist_mat[i][j] = d
                 dist_mat[j][i] = d
         
@@ -119,13 +119,44 @@ class PuzzlePiece:
             if early_stop:
                 break
        
+        # puts points in order and compute center
+        self.x_center = 0.0
+        self.y_center = 0.0
         self.ordered_border = {} 
         for i,o in enumerate(ordered_pts):
             self.ordered_border[i] = { 'x':self.border[o]['x'],
                                        'y':self.border[o]['y'],
                                        'order':i}
+            self.x_center += self.border[o]['x']
+            self.y_center += self.border[o]['y']
+        self.x_center /= len(self.border)
+        self.y_center /= len(self.border)
             
-        # TODO: need to verify clockwise orientation
-                                                                                                         
+        # verify clockwise orientation
+        # gather angles from origin point to first 25% of points
+        # in steps of 5 - get a collection of angles which should generally 
+        # move in one direction clockwise or counter-clockwise
+        angle_direction = 0
+        for i in range(1, int(len(self.border)/4), 5):
+            ang = angle( [self.border[0]['x'], self.border[0]['y']],
+                         [self.border[i]['x'], self.border[0]['y']] )
+            if ang > 0:
+                angle_direction += 1 # clockwise
+            elif ang < 0:
+                angle_direction -= 1 # counter-clockwise
+        
+        # if general direction is not clockwise, reverse order
+        if angle_direction > 0:
+            new_order = {}
+            for i,k in enumerate(list(self.ordered_border.keys())[::-1]):
+                new_order[i] = { 'x':self.ordered_border[k]['x'],
+                                 'y':self.ordered_border[k]['y'] }
+            self.ordered_border = new_order
+        
+        
+
+        
+    
+                                                                                 
         
         
