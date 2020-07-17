@@ -4,15 +4,20 @@ from Utilities import *
 
 class PuzzlePiece:
     
-    def __init__(self, border_fn, border_sampling_rate = 0.20, dist_window_size = 10):
+    def __init__(self, border_fn, border_sampling_rate = 0.20, window_size = 10):
         
         # fn: filename containing the ordered list of border points (x,y,order)
         # sampling_rate: sampling rate on the border for reduced representation
         # window_size: number of sampled points on either side of the central for 
         
         self.load_border(border_fn)
+        
+        self.border_sampling_rate = border_sampling_rate
         self.sample_border(border_sampling_rate)
-        self.create_border_distances(dist_window_size)
+        
+        self.window_size = window_size
+        self.create_distances(window_size)
+        self.create_angles(window_size)
         
     def load_border(self, border_fn = None):
         
@@ -50,14 +55,14 @@ class PuzzlePiece:
                                    'y': self.ordered_border[index]['y']
                                   }
     
-    def create_border_distances(self, dist_window_size = 10):
+    def create_distances(self,window_size = 10):
         
         # for the sampled points, create all pair-wise distances
         
         self.sample_dists = {}
         indices = self.border_sample.keys()
         for idx in [*indices]:
-            window = [ idx + v for v in range(-dist_window_size, dist_window_size + 1) ]
+            window = [ idx + v for v in range(-window_size, window_size + 1) ]
             for i,v in enumerate(window):
                 if v<0:
                     window[i] += len(indices)
@@ -70,6 +75,26 @@ class PuzzlePiece:
                     self.sample_dists[idx].append(euc_dist( [self.border_sample[jdx]['x'], self.border_sample[jdx]['y'] ],
                                                             [self.border_sample[kdx]['x'], self.border_sample[kdx]['y'] ] ))
 
+    def create_angles(self, window_size = 10):
+        
+        # for the sampled points, create all pair-wise angles
+        
+        self.sample_angles = {}
+        indices = self.border_sample.keys()
+        for idx in [*indices]:
+            window = [ idx + v for v in range(-window_size, window_size + 1) ]
+            for i,v in enumerate(window):
+                if v<0:
+                    window[i] += len(indices)
+                elif v >= len(indices):
+                    window[i] -= len(indices)
+            
+            self.sample_angles[idx] = [] 
+            for j,jdx in enumerate(window[:-1]):
+                for k,kdx in enumerate(window[j+1:]):
+                    self.sample_angles[idx].append(angle( [self.border_sample[jdx]['x'], self.border_sample[jdx]['y'] ],
+                                                            [self.border_sample[kdx]['x'], self.border_sample[kdx]['y'] ] ))
+                    
     def order_border(self):
         
         # put the border points in order, and assure clockwise orientation
