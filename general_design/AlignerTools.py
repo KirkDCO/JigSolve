@@ -1,3 +1,5 @@
+from Utilities import *
+
 def GetAlignedWindows(M, N, m_pt, n_pt, window):
     
     # for the given point in each set of points
@@ -44,11 +46,11 @@ def AlignScore(M, N, m_pt, n_pt, window):
     # between matched points
     sum = 0.0
     for M_pt, N_pt in zip(M_window.keys(), N_window.keys()):
-        sum += EucDist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
+        sum += euc_dist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
                         [ N_window[N_pt]['x'], N_window[N_pt]['y'] ])
     return sqrt(sum)
 
-def AlignPieces_Euclid(M, N, mode = 'max distance', window=10, 
+def AlignPiecesEuclid(M, N, mode = 'max distance', window=10, 
              cutoff = 100, distr_score = False, av = 25, sd = 5): 
       
     
