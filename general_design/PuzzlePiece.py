@@ -272,7 +272,7 @@ class PuzzlePiece:
             if p[1]['y'] > max_y:
                 max_y = p[1]['y']
                         
-        self.border = self.compute_border(combo_array, min_x, max_x, min_y, max_y)
+        self.compute_border(combo_array, min_x, max_x, min_y, max_y)
                         
     def compute_border(self, point_array, min_x, max_x, min_y, max_y):
         # compute new boundary
@@ -281,7 +281,8 @@ class PuzzlePiece:
         piece_coords = dict()
         composite_x = []
         composite_y = []
-        
+        checks = []
+         
         for x in range(min_x-10, max_x+11):
             for y in range(min_y-10, max_y+11):
                 if x not in piece_coords:
@@ -296,6 +297,7 @@ class PuzzlePiece:
                         v = 0 # black point
                         composite_x.append(x)
                         composite_y.append(y)
+                        checks.append( (x,y) )
         
                 piece_coords[x][y] = {'value': v,
                                       'left':None,
@@ -304,6 +306,7 @@ class PuzzlePiece:
                                       'down':None,
                                       'visited':False,
                                       'outer_border':False}
+            
         min_x = min(piece_coords.keys())
         max_x = max(piece_coords.keys())
         min_y = min(piece_coords[min_x].keys())
@@ -332,10 +335,9 @@ class PuzzlePiece:
         while True:
             curr_node = piece_coords[curr_x][curr_y]
             curr_node['visited'] = True
-            
+           
             # check for black
             if curr_node['value'] == 0:
-                print('found black')
                 curr_node['outer_border'] = True
                 (curr_x, curr_y) = stack.pop()
                 continue
@@ -368,25 +370,23 @@ class PuzzlePiece:
             else:
                 (curr_x, curr_y) = stack.pop()
                        
-            # inside, outside, and border
-            border_x = []
-            border_y = []
+        # inside, outside, and border
+        border_x = []
+        border_y = []
 
-            for x in piece_coords.keys():
-                for y in piece_coords[x].keys():
-                    if piece_coords[x][y]['outer_border']:
-                        print('Found one!')
-                        border_x.append(x)
-                        border_y.append(y)
+        for x in piece_coords.keys():
+            for y in piece_coords[x].keys():
+                if piece_coords[x][y]['outer_border']:
+                    border_x.append(x)
+                    border_y.append(y)
+                    
+        self.border = {}
+        for i,(x,y) in enumerate(zip(border_x, border_y)):
+            self.border[i] = { 'x':x,
+                               'y':y, 
+                               'order':None }
             
-            self.border = {}
-            for i,(x,y) in enumerate(zip(border_x, border_y)):
-                self.border[i] = { 'x':x,
-                                   'y':y, 
-                                   'order':None }
-            print(self.border)    
-            self.order_border()
-            self.sample_border(self.border_sampling_rate)
-            self.create_distances(self.window_size)
-            self.create_angles(self.window_size)
-        
+        self.order_border()
+        self.sample_border(self.border_sampling_rate)
+        self.create_distances(self.window_size)
+        self.create_angles(self.window_size)
