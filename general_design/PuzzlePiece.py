@@ -182,27 +182,38 @@ class PuzzlePiece:
     def extend_border_sample(self, tail_length, reverse=False):
        
         # extend the sequence from the end to account for border effects
+        self.ext_to_old_index = {} # dictionary to translate new indices to old indices
+        
         if not reverse:
             self.border_sample_ext = copy.deepcopy(self.border_sample)
-            for i,idx in enumerate(range(len(self.border_sample), tail_length)):
+            self.ext_to_old_index = {i:i for i in range(len(self.border_sample))}
+                                     
+            for i,idx in enumerate(range(len(self.border_sample), len(self.border_sample) + tail_length)):
                 self.border_sample_ext[len(self.border_sample) + i] = \
                    copy.deepcopy(self.border_sample[i])
+                self.ext_to_old_index[idx] = i
+                                     
         else:
             self.border_sample_ext = {}
+            ext_to_old = {}
             for i,idx in enumerate(range(len(self.border_sample) - tail_length,
                                          len(self.border_sample))):
                 self.border_sample_ext[i] = { 'orig_idx': self.border_sample[idx]['orig_idx'],
                                               'x': self.border_sample[idx]['x'],
                                               'y': self.border_sample[idx]['y']}
-        
+                ext_to_old[i] = idx
+                    
             for i,idx in enumerate(range(0, len(self.border_sample))):
                 self.border_sample_ext[tail_length + i] = \
                     { 'orig_idx':self.border_sample[idx]['orig_idx'],
                       'x': self.border_sample[idx]['x'],
                       'y': self.border_sample[idx]['y']}
+                ext_to_old[tail_length + i] = idx
+                
             # reverse target for complementarity between query and target
             self.border_sample_ext = { i:self.border_sample_ext[i]
                                        for i in list(self.border_sample_ext.keys())[::-1] } 
+            self.ext_to_old_index = { len(ext_to_old) - k - 1: v for k,v in ext_to_old.items() }
 
     def reposition(self, source_window, destination, destination_window):
         
