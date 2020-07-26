@@ -1,14 +1,12 @@
 from EuclideanSimilarity import *
-from CutoffPenalizer import *
 
 class SWPuzzleAligner:
     
-    def __init__(self, sim_calc = None, penalizer = None):
+    def __init__(self, sim_calc = None):
         
         self.sim_calc = sim_calc
-        self.penalizer = penalizer
 
-    def Align(M, N, window=10, cutoff_percentile = 0.1)
+    def Align(self, M = None, N = None, window=10, cutoff_percentile = 0.1):
         
         # build similarity matrix
         # TODO: should build similarity matrix externally and supply to function
@@ -19,7 +17,7 @@ class SWPuzzleAligner:
                 if (i == 0 or j == 0): 
                     continue
                 else:
-                    sim_matrix[i][j] = sim_calc.SimilarityScore(M, N, i-1, j-1, window)
+                    sim_matrix[i][j] = self.sim_calc.SimilarityScore(M, N, i-1, j-1, window)
 
         # determine cutoff value - where should this actually happen?
         sims = []
@@ -38,24 +36,30 @@ class SWPuzzleAligner:
 
         # Create suffix table
         SuffTable = [[0 for k in range(len(N)+1)] for l in range(len(M)+1)] 
+        cutoff_multiplier = 2 # penalty for extended poor scoring cells
         for i in range(len(M) + 1): 
             for j in range(len(N) + 1): 
                 if (i == 0 or j == 0): 
                     SuffTable[i][j] = 0
                 else:
                     d = sim_matrix[i][j]
-                    d = self.penalizer.SimScorePenalty(d, SuffixTable, i, j, cutoff)
-                    SuffixTable[i][j] = SuffixTable[i-1][j-1] + d
-                    SuffixTable[i][j] = max(0,SuffixTable[i][j])
-
-                    if SuffixTable[i][j] > mx:
-                        mx = SuffixTable[i][j]
+                    if d < cutoff:
+                        SuffTable[i][j] = SuffTable[i-1][j-1] + 1
+                        cutoff_multiplier = 1.0
+                    else:
+                        SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier
+                        cutoff_multiplier *= 2.0
+                        
+                    SuffTable[i][j] = max(0,SuffTable[i][j])
+    
+                    if SuffTable[i][j] > mx:
+                        mx = SuffTable[i][j]
                         mx_M = i
                         mx_N = j
 
         # determine the length of the best scoring window
         for length in range(1, min(mx_M, mx_N) + 1):
-            if SuffixTable[mx_M-length][mx_N - length] == 0:
+            if SuffTable[mx_M-length][mx_N - length] == 0:
                 break
 
-        return SuffixTable, mx, mx_M, mx_N, length + 1
+        return SuffTable, mx, mx_M, mx_N, length + 1

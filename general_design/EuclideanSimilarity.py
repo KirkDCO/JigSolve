@@ -5,7 +5,7 @@ class EuclideanSimilarity:
     def __init__(self):
         pass
 
-    def GetAlignedWindows(M, N, m_pt, n_pt, window):
+    def GetAlignedWindows(self, M, N, m_pt, n_pt, window):
     
         # for the given point in each set of points
         # extract the window of interest
@@ -41,7 +41,7 @@ class EuclideanSimilarity:
 
         return M_window, N_window
 
-    def SimilarityScore(M, N, m_pt, n_pt, window):
+    def SimilarityScore(self, M, N, m_pt, n_pt, window):
 
         # get the aligned windows
         M_window, N_window = self.GetAlignedWindows(M, N, m_pt, n_pt, window)
@@ -51,7 +51,7 @@ class EuclideanSimilarity:
         # between matched points
         sum = 0.0
         for M_pt, N_pt in zip(M_window.keys(), N_window.keys()):
-            sum += EucDist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
+            sum += euc_dist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
                             [ N_window[N_pt]['x'], N_window[N_pt]['y'] ])
             
         return sqrt(sum)
