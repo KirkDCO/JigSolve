@@ -48,7 +48,7 @@ class SWPuzzleAligner:
                         cutoff_multiplier = 1.0
                     else:
                         SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier
-                        cutoff_multiplier *= 2.0
+                        cutoff_multiplier *= 1.0
                         
                     SuffTable[i][j] = max(0,SuffTable[i][j])
     
