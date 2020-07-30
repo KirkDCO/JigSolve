@@ -20,11 +20,12 @@ class SWPuzzleAligner:
                     sim_matrix[i][j] = self.sim_calc.SimilarityScore(M, N, i-1, j-1, window)
 
         # determine cutoff value - where should this actually happen?
-        sims = []
+        sims = set() 
         for i in range(1,len(sim_matrix)):
             for j in range(1,len(sim_matrix[i])):
-                sims.append(sim_matrix[i][j])
+                sims.add(sim_matrix[i][j])
 
+        sims = list(sims)
         sims.sort()
         cutoff = sims[int(len(sims) * cutoff_percentile)]
         
@@ -36,7 +37,7 @@ class SWPuzzleAligner:
 
         # Create suffix table
         SuffTable = [[0 for k in range(len(N)+1)] for l in range(len(M)+1)] 
-        cutoff_multiplier = 2 # penalty for extended poor scoring cells
+        cutoff_multiplier = [[1 for k in range(len(N)+1)] for l in range(len(M)+1)] # penalty for extended poor scoring cells
         for i in range(len(M) + 1): 
             for j in range(len(N) + 1): 
                 if (i == 0 or j == 0): 
@@ -45,10 +46,10 @@ class SWPuzzleAligner:
                     d = sim_matrix[i][j]
                     if d < cutoff:
                         SuffTable[i][j] = SuffTable[i-1][j-1] + 1
-                        cutoff_multiplier = 1.0
+                        cutoff_multiplier[i][j] = 1
                     else:
-                        SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier
-                        cutoff_multiplier *= 1.0
+                        SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier[i-1][j-1] 
+                        cutoff_multiplier[i][j] += 2
                         
                     SuffTable[i][j] = max(0,SuffTable[i][j])
     
