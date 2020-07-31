@@ -49,7 +49,7 @@ class SWPuzzleAligner:
                         cutoff_multiplier[i][j] = 1
                     else:
                         SuffTable[i][j] = SuffTable[i-1][j-1] - cutoff_multiplier[i-1][j-1] 
-                        cutoff_multiplier[i][j] += 2
+                        cutoff_multiplier[i][j] = cutoff_multiplier[i-1][j-1] * 2
                         
                     SuffTable[i][j] = max(0,SuffTable[i][j])
     
@@ -63,4 +63,4 @@ class SWPuzzleAligner:
             if SuffTable[mx_M-length][mx_N - length] == 0:
                 break
 
-        return SuffTable, mx, mx_M, mx_N, length + 1
+        return SuffTable, mx, mx_M, mx_N, length
