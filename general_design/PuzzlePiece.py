@@ -5,7 +5,7 @@ from Utilities import *
 
 class PuzzlePiece:
     
-    def __init__(self, border_fn, border_sampling_rate = 0.20, window_size = 10):
+    def __init__(self, border_fn, border_sampling_rate = 0.20):
         
         # fn: filename containing the list of border points
         # sampling_rate: sampling rate on the border for reduced representation
@@ -16,9 +16,9 @@ class PuzzlePiece:
         self.border_sampling_rate = border_sampling_rate
         self.sample_border(border_sampling_rate)
         
-        self.window_size = window_size
-        self.create_distances(window_size)
-        self.create_angles(window_size)
+        #self.window_size = window_size # window_size determined how big the window was for 
+        #self.create_distances(window_size) # computing pairwise distances and angles
+        #self.create_angles(window_size) # removed from parameter list while these are no longer used
         
     def load_border(self, border_fn = None):
         
