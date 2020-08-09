@@ -45,7 +45,6 @@ class PuzzlePiece:
     def sample_border(self, border_sampling_rate = 0.20):
         
         # sample the border and store the sampled points 
-        
         self.border_sample = {}
         
         indices = [i for i in range(0,len(self.ordered_border), floor(1/border_sampling_rate)) ]
@@ -215,7 +214,7 @@ class PuzzlePiece:
                                        for i in list(self.border_sample_ext.keys())[::-1] } 
             self.ext_to_old_index = { len(ext_to_old) - k - 1: v for k,v in ext_to_old.items() }
 
-    def reposition(self, source_window, destination, destination_window):
+    def reposition_by_sample(self, source_window, destination, destination_window):
         
         # reposition this piece to the supplied target based on the supplied points window
         # for now, use the border_sample points

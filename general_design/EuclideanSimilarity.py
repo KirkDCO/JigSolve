@@ -24,7 +24,7 @@ class EuclideanSimilarity:
                          'y':M[list(M.keys())[pt]]['y']} for pt in M_pts }
 
         # find the shift needed to align the given points
-        # 2-dimensional for now
+        # no rotation for now
         x_shift = M[list(M.keys())[m_pt]]['x'] - N[list(N.keys())[n_pt]]['x']
         y_shift = M[list(M.keys())[m_pt]]['y'] - N[list(N.keys())[n_pt]]['y']
 
@@ -49,9 +49,34 @@ class EuclideanSimilarity:
         # compute similarity score 
         # similarity in this case is the sum of Euclidean distances 
         # between matched points
-        sum = 0.0
+        s = 0.0
         for M_pt, N_pt in zip(M_window.keys(), N_window.keys()):
-            sum += euc_dist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
+            s += euc_dist( [ M_window[M_pt]['x'], M_window[M_pt]['y'] ],
                             [ N_window[N_pt]['x'], N_window[N_pt]['y'] ])
             
-        return sqrt(sum)
+        return sqrt(s)
+    
+    def ComputeSubseqDist(self, M, N):
+        
+        # compute the minimum sum of Euclidena distances between points
+        # in the passed sequences
+        
+        xshift = int((sum([M[p]['x'] for p in M]) - \
+                      sum([N[p]['x'] for p in N])) / len(M))
+        yshift = int((sum([M[p]['y'] for p in M]) - \
+                      sum([N[p]['y'] for p in N])) / len(N))
+
+        N_shifted = {}
+        for k,v in N.items():
+            N_shifted[k] = {} 
+            N_shifted[k]['x'] = N[k]['x'] + xshift
+            N_shifted[k]['y'] = N[k]['y'] + yshift
+            
+        s = 0.0
+        for M_pt, N_pt in zip(M.keys(), N_shifted.keys()):
+            s += euc_dist( [ M[M_pt]['x'], M[M_pt]['y'] ],
+                            [ N_shifted[N_pt]['x'], N_shifted[N_pt]['y'] ])
+            
+        return sqrt(s)
+            
+        
