@@ -236,10 +236,23 @@ class PuzzlePiece:
                   for t in [list(self.border_sample.keys())[::-1][i] 
                             for i in source_window]]
         
-        xshift = int((sum([p['x'] for p in destination_points]) - \
+        xshift = int((sum([p['x'] for p,v in destination_points]) - \
                       sum([p['x'] for p in source_points])) / len(destination_window))
         yshift = int((sum([p['y'] for p in destination_points]) - \
                       sum([p['y'] for p in source_points])) / len(source_window))
+
+        for p in self.border.items():
+            p[1]['x'] += xshift
+            p[1]['y'] += yshift
+                    
+    def reposition_by_border(self, source_window, destination_window):
+        
+        # reposition this piece to the supplied target based on the supplied points window
+        # here, use the full border
+        xshift = int((sum([destination_window[p]['x'] for p in destination_window]) - \
+                      sum([source_window[p]['x'] for p in source_window])) / len(destination_window))
+        yshift = int((sum([destination_window[p]['y'] for p in destination_window]) - \
+                      sum([source_window[p]['y'] for p in source_window])) / len(source_window))
 
         for p in self.border.items():
             p[1]['x'] += xshift
@@ -398,5 +411,5 @@ class PuzzlePiece:
             
         self.order_border()
         self.sample_border(self.border_sampling_rate)
-        self.create_distances(self.window_size)
-        self.create_angles(self.window_size)
+        #self.create_distances(self.window_size)
+        #self.create_angles(self.window_size)
