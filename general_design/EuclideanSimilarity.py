@@ -1,4 +1,5 @@
 from Utilities import *
+from scipy.stats import pearsonr
 
 class EuclideanSimilarity:
 
@@ -55,7 +56,7 @@ class EuclideanSimilarity:
                             [ N_window[N_pt]['x'], N_window[N_pt]['y'] ])
             
         return sqrt(s)
-    
+        
     def ComputeSubseqDist(self, M, N):
         
         # compute the minimum sum of Euclidena distances between points

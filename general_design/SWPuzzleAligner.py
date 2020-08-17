@@ -19,6 +19,11 @@ class SWPuzzleAligner:
                 else:
                     sim_matrix[i][j] = self.sim_calc.SimilarityScore(Q, T, i-1, j-1, window)
 
+#         fout = open('sim_mat.csv', 'w')
+#         for r in sim_matrix:
+#             fout.write(','.join([str(v) for v in r]) + '\n')
+#         fout.close()
+        
         # determine cutoff value - where should this actually happen?
         sims = set() 
         for i in range(1,len(sim_matrix)):
