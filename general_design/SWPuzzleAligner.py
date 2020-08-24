@@ -1,4 +1,7 @@
 from EuclideanSimilarity import *
+from Utilities import *
+
+from math import *
 
 class SWPuzzleAligner:
     
@@ -24,7 +27,7 @@ class SWPuzzleAligner:
 #             fout.write(','.join([str(v) for v in r]) + '\n')
 #         fout.close()
         
-        # determine cutoff value - where should this actually happen?
+        # determine cutoff value
         sims = set() 
         for i in range(1,len(sim_matrix)):
             for j in range(1,len(sim_matrix[i])):
@@ -59,24 +62,66 @@ class SWPuzzleAligner:
         length = [0 for i in range(return_top)]
         
         #find the maxima
-        for a in range(return_top):
+        a = 0
+        while a < return_top:
+            # get the first candidate alignment
             mx_list = [max(r) for r in SuffTable]
-            mx[a] = max([r for r in mx_list])
-            mx_Q[a] = mx_list.index(max(mx_list))
-            mx_T[a] = SuffTable[mx_Q[a]].index(mx[a])
+            mx_cand = max([r for r in mx_list])
+            mx_Q_cand = mx_list.index(max(mx_list))
+            mx_T_cand = SuffTable[mx_Q_cand].index(mx_cand)
+            length_cand = 0
             
             #determine its length, and zero out this alignment
-            for l in range(0, min(mx_Q[a], mx_T[a]) + 1):
-                if SuffTable[mx_Q[a] - l][mx_T[a] - l] == 0:
-                    length[a] = l + 1
+            for l in range(0, min(mx_Q_cand, mx_T_cand) + 1):
+                if SuffTable[mx_Q_cand - l][mx_T_cand - l] == 0:
+                    length_cand = l + 1
                     break
                 else:
-                    SuffTable[mx_Q[a]-l][mx_T[a]-l] = 0
+                    SuffTable[mx_Q_cand-l][mx_T_cand-l] = 0
             
-            for l in range(1, min(len(SuffTable)-mx_Q[a], len(SuffTable[0])-mx_T[a])):
-                if SuffTable[mx_Q[a] + l][mx_T[a] + l] == 0:
+            for l in range(1, min(len(SuffTable)-mx_Q_cand, len(SuffTable[0])-mx_T_cand)):
+                if SuffTable[mx_Q_cand + l][mx_T_cand + l] == 0:
                     break
                 else:
-                    SuffTable[mx_Q[a] +l][mx_T[a] +l] = 0
+                    SuffTable[mx_Q_cand +l][mx_T_cand +l] = 0
                     
+            # determine if it is an edge-on-edge alignment - if so, drop it
+            # slopes = set() 
+            # for j in range(mx_T_cand, mx_T_cand - length_cand + 2, -1):
+            #     rise = abs(T[j]['y'] - T[j-1]['y'])
+            #     run = abs(T[j]['x'] - T[j-1]['x'])
+            #     
+            #     if run == 0:
+            #         slopes.add(0) # infinite slope set to 0
+            #     else:
+            #         slopes.add( floor(rise/run) ) 
+            #         
+            # if len(slopes) == 1:
+            #     continue
+            # else:
+            #     mx[a] = mx_cand
+            #     mx_Q[a] = mx_Q_cand
+            #     mx_T[a] = mx_T_cand
+            #     length[a] = length_cand
+            #     a += 1
+            x_vals = [ T[j]['x'] for j in range(mx_T_cand, mx_T_cand - length_cand +1, -1) ]
+            y_vals = [ T[j]['y'] for j in range(mx_T_cand, mx_T_cand - length_cand +1, -1) ]
+                    
+            x_avg = avg(x_vals)
+            y_avg = avg(y_vals)
+            xi_xbar = [ x - x_avg for x in x_vals ]
+            yi_ybar = [ y - y_avg for y in y_vals ]
+            
+            num = sum([ x * y for x,y in zip(xi_xbar, yi_ybar) ])
+            den = sqrt(sum([x**2 for x in xi_xbar]) * sum([y**2 for y in yi_ybar]))
+            
+            if den == 0:
+                r = 0
+            else:
+                r = num/den
+                
+            print(r)
+            
+            a += 1
+                      
         return {'mx':mx, 'mx_Q':mx_Q, 'mx_T':mx_T, 'length':length}
