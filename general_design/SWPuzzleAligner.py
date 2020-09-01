@@ -22,10 +22,10 @@ class SWPuzzleAligner:
                 else:
                     sim_matrix[i][j] = self.sim_calc.SimilarityScore(Q, T, i-1, j-1, window)
 
-#         fout = open('sim_mat.csv', 'w')
-#         for r in sim_matrix:
-#             fout.write(','.join([str(v) for v in r]) + '\n')
-#         fout.close()
+        # fout = open('sim_mat.csv', 'w')
+        # for r in sim_matrix:
+        #     fout.write(','.join([str(v) for v in r]) + '\n')
+        # fout.close()
         
         # determine cutoff value
         sims = set() 
@@ -54,6 +54,11 @@ class SWPuzzleAligner:
                         cutoff_multiplier[i][j] = cutoff_multiplier[i-1][j-1] * 2
                         
                     SuffTable[i][j] = max(0,SuffTable[i][j])
+        
+        # fout = open('sufftable.csv', 'w')
+        # for r in SuffTable:
+        #     fout.write(','.join([str(v) for v in r]) + '\n')
+        # fout.close()
         
         # the the maximum scores and positions
         mx = [0.0 for i in range(return_top)]
@@ -86,42 +91,18 @@ class SWPuzzleAligner:
                     SuffTable[mx_Q_cand +l][mx_T_cand +l] = 0
                     
             # determine if it is an edge-on-edge alignment - if so, drop it
-            # slopes = set() 
-            # for j in range(mx_T_cand, mx_T_cand - length_cand + 2, -1):
-            #     rise = abs(T[j]['y'] - T[j-1]['y'])
-            #     run = abs(T[j]['x'] - T[j-1]['x'])
-            #     
-            #     if run == 0:
-            #         slopes.add(0) # infinite slope set to 0
-            #     else:
-            #         slopes.add( floor(rise/run) ) 
-            #         
-            # if len(slopes) == 1:
-            #     continue
-            # else:
-            #     mx[a] = mx_cand
-            #     mx_Q[a] = mx_Q_cand
-            #     mx_T[a] = mx_T_cand
-            #     length[a] = length_cand
-            #     a += 1
-            x_vals = [ T[j]['x'] for j in range(mx_T_cand, mx_T_cand - length_cand +1, -1) ]
-            y_vals = [ T[j]['y'] for j in range(mx_T_cand, mx_T_cand - length_cand +1, -1) ]
-                    
-            x_avg = avg(x_vals)
-            y_avg = avg(y_vals)
-            xi_xbar = [ x - x_avg for x in x_vals ]
-            yi_ybar = [ y - y_avg for y in y_vals ]
+            kys = [ list(T.keys())[m] for m in range(mx_T_cand, mx_T_cand - length_cand +1, -1) ]
+            x_vals = [ T[k]['x'] for k in kys ] 
+            y_vals = [ T[k]['y'] for k in kys ]
             
-            num = sum([ x * y for x,y in zip(xi_xbar, yi_ybar) ])
-            den = sqrt(sum([x**2 for x in xi_xbar]) * sum([y**2 for y in yi_ybar]))
-            
-            if den == 0:
-                r = 0
-            else:
-                r = num/den
-                
-            print(r)
-            
-            a += 1
+            print('X: ', x_vals)
+            print('Y: ', y_vals)
+             
+            mx[a] = mx_cand
+            mx_Q[a] = mx_Q_cand
+            mx_T[a] = mx_T_cand
+            length[a] = length_cand
                       
+            a += 1
+            
         return {'mx':mx, 'mx_Q':mx_Q, 'mx_T':mx_T, 'length':length}
