@@ -23,10 +23,10 @@ exploratory/ - all the files here came about during exploratory work to get an i
 
 	representations - all .csv files with piece representations generated in exploratory work
 
-  puzzle_images - this contains the original 3x3 .jpg I used.  The individual pieces are labeled by the directional location of the piece - C = Central, N = North, SW = SouthWest, etc. C_OutBorderIn.jpg was generated to verify the one pixel border work.
+  	puzzle_images - this contains the original 3x3 .jpg I used.  The individual pieces are labeled by the directional location of the piece - C = Central, N = North, SW = SouthWest, etc. C_OutBorderIn.jpg was generated to verify the one pixel border work.
 
-3x3_refinement/ - After exploratory work, pulling all the code together into a form that works.  
+	3x3_refinement/ - After exploratory work, pulling all the code together into a form that works.  
 
-general_design/ - After getting things working in 3x3_refinement, code is organized into a more general design.  The pieces/ directory contains only the \*border.csv files, which are the expected starting point for now - all other representations will be created from this point.
+	general_design/ - After getting things working in 3x3_refinement, code is organized into a more general design.  The pieces/ directory contains only the \*border.csv files, which are the expected starting point for now - all other representations will be created from this point.
 
 
