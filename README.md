@@ -5,7 +5,7 @@ The intent is to develop an algorithm that can solve a jigsaw puzzle.
 
 Directories:
 
-exploratory/ - all the file here came about during exploratory work to get an idea of how to approach the project.  Sub-directories are numbered in order of exploratory work.  The files in piece images/ and representations/ are duplicated throughout the exploratory/ sub-directories to remain consistent with how I approached the problem, and are duplicated in these two directories to gather all the results in one place.
+exploratory/ - all the files here came about during exploratory work to get an idea of how to approach the project.  Sub-directories are numbered in order of exploratory work.  The files in piece images/ and representations/ are duplicated throughout the exploratory/ sub-directories to remain consistent with how I approached the problem, and are duplicated in these two directories to gather all the results in one place.
 
 	01_Jigsaw_JPGtoXY - simply convert the individual piece JPG files to .csv files.
 
@@ -25,8 +25,8 @@ exploratory/ - all the file here came about during exploratory work to get an id
 
   puzzle_images - this contains the original 3x3 .jpg I used.  The individual pieces are labeled by the directional location of the piece - C = Central, N = North, SW = SouthWest, etc. C_OutBorderIn.jpg was generated to verify the one pixel border work.
 
-3x3_refinement/ - After exploratory work, start to pull all the code together into a form that works.  
+3x3_refinement/ - After exploratory work, pulling all the code together into a form that works.  
 
-general_design/ - After getting things working in 3x3_refinement, code will be organized into a more general design.  The pieces/ directory contains only the \*border.csv files, which are the expected starting point for now - all other representations will be created from this point.
+general_design/ - After getting things working in 3x3_refinement, code is organized into a more general design.  The pieces/ directory contains only the \*border.csv files, which are the expected starting point for now - all other representations will be created from this point.
 
 
